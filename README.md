@@ -286,8 +286,12 @@ Se debe tener las mismas consideraciones para que en el POST
 id: Identificador del program que desea eliminar
 
 
+----------------------
+
+## Nota:
 Se debe tener en cuenta que todas las APIs anteriormente listadas requieren de la autentificación
-## Ejemplo
+
+### Ejemplo
 ```json
 curl --location 'http://127.0.0.1:8000/api/v1/programs-participants?page=1' \
 --header 'Authorization: Bearer 6|bSlXDWQxotPeg6RajjGDjXPqUGBMLFNrJH8Kxgzr82937a58'
