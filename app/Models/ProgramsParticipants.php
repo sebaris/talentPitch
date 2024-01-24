@@ -33,12 +33,15 @@ class ProgramsParticipants extends Model
      * @return bool
      */
     public static function validateEntities(Request $request): bool {
-        $data = $request->all();
-        $class = EntityType::getParent($data['entity_type']);
-        $model = $class::find($data['entity_id']);
-        if ($model) {
-            return true;
-        }
+        try {
+            $data = $request->all();
+            $class = EntityType::getParent($data['entity_type']);
+            $model = $class::find($data['entity_id']);
+            if ($model) {
+                return true;
+            }
+        } catch (\Throwable $th) {}
+
         return false;
     }
 }
