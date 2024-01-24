@@ -82,9 +82,11 @@ Donde se modifica el email y password por los tomados en el punto 6.
 ```
 De esta respuesta tomamos el token, para posterior autentificación usando Bearer de las CRUDS creados para las APIs.
 
-9. Tiene entonces a disposición las siguientes API's
+----------------------
 
-### User
+## Tiene entonces a disposición las siguientes API's
+
+## User
 - GET {baseUrl}/v1/users?page=1&items=10.
 
 page: el número de pagina que se desea mostrar y items es opcional si desea variar el número de items por página
@@ -123,7 +125,9 @@ Se debe enviar en formato json los siguientes datos en el body:
 
 id: Identificador del usuario que desea eliminar
 
-### Challenges
+--------------------------
+
+## Challenges
 - GET {baseUrl}/v1/challenges?page=1&items=10.
 
 page: el número de pagina que se desea mostrar y items es opcional si desea variar el número de items por página, si no por defecto es 10
@@ -162,7 +166,9 @@ Se debe enviar en formato json los siguientes datos en el body:
 
 id: Identificador del challenge que desea eliminar
 
-### Companies
+-----------
+
+## Companies
 - GET {baseUrl}/v1/companies?page=1&items=10.
 
 page: el número de pagina que se desea mostrar y items es opcional si desea variar el número de items por página, si no por defecto es 10
@@ -203,7 +209,9 @@ Se debe enviar en formato json los siguientes datos en el body:
 
 id: Identificador del company que desea eliminar
 
-### Programs
+----------------------------
+
+## Programs
 - GET {baseUrl}/v1/programs?page=1&items=10.
 
 page: el número de pagina que se desea mostrar y items es opcional si desea variar el número de items por página, si no por defecto es 10
@@ -244,7 +252,9 @@ Se debe enviar en formato json los siguientes datos en el body:
 
 id: Identificador del program que desea eliminar
 
-### Programs Participants
+------------------
+
+## Programs Participants
 - GET {baseUrl}/v1/programs-participants?page=1&items=10.
 
 page: el número de pagina que se desea mostrar y items es opcional si desea variar el número de items por página, si no por defecto es 10
