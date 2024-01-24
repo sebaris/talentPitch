@@ -2,18 +2,18 @@
 
 namespace Tests\Feature;
 
-use App\Models\Challenges;
+use App\Models\Companies;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Tests\TestCase;
 
-class ChallengesControllerTest extends TestCase
+class CompaniesControllerTest extends TestCase
 {
     //use RefreshDatabase;
 
     private User $user;
-
-    private Challenges $challenge;
+    private Companies $company;
 
     /**
      * Function to set up the test
@@ -24,9 +24,13 @@ class ChallengesControllerTest extends TestCase
     {
         parent::setUp();
 
+        // Migrate and seed your database
+        // Artisan::call('migrate');
+        // Artisan::call('db:seed');
+
         // Create a test user with Sanctum tokens
         $this->user = User::factory()->create();
-        $this->challenge = Challenges::factory()->create();
+        $this->company = Companies::factory()->create();
         $this->actingAs($this->user);
     }
 
@@ -35,9 +39,9 @@ class ChallengesControllerTest extends TestCase
      *
      * @return void
      */
-    public function test_index_a_collection_of_challenges()
+    public function test_index_a_collection_of_companies()
     {
-        $response = $this->json('GET', '/api/v1/challenges');
+        $response = $this->json('GET', '/api/v1/companies');
 
         // Assert
         $response->assertStatus(200)
@@ -45,9 +49,10 @@ class ChallengesControllerTest extends TestCase
                 'data' => [
                     '*' => [
                         'id',
-                        'title',
-                        'description',
-                        'difficulty',
+                        'name',
+                        'image_path',
+                        'location',
+                        'industry',
                         'user' => [
                             'id',
                             'name',
@@ -63,9 +68,9 @@ class ChallengesControllerTest extends TestCase
      *
      * @return void
      */
-    public function test_index_a_collection_of_challenges_paginate()
+    public function test_index_a_collection_of_companies_paginate()
     {
-        $response = $this->json('GET', '/api/v1/challenges?paginate=1');
+        $response = $this->json('GET', '/api/v1/companies?paginate=1');
 
         // Assert
         $response->assertStatus(200)->assertJsonCount(10, 'data');
@@ -76,17 +81,18 @@ class ChallengesControllerTest extends TestCase
      *
      * @return void
      */
-    public function test_show_challenge_by_id()
+    public function test_show_company_by_id()
     {
-        $response = $this->json('GET', '/api/v1/challenges/'.$this->challenge->id);
+        $response = $this->json('GET', '/api/v1/companies/' . $this->company->id);
 
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
                     'id',
-                    'title',
-                    'description',
-                    'difficulty',
+                    'name',
+                    'image_path',
+                    'location',
+                    'industry',
                     'user' => [
                         'id',
                         'name',
@@ -101,9 +107,9 @@ class ChallengesControllerTest extends TestCase
      *
      * @return void
      */
-    public function test_error_show_challenge_by_id()
+    public function test_error_show_company_by_id()
     {
-        $response = $this->json('GET', '/api/v1/challenges/1500');
+        $response = $this->json('GET', '/api/v1/companies/1500');
 
         $response->assertStatus(404)
             ->assertJsonStructure(['error', 'code']);
@@ -114,12 +120,13 @@ class ChallengesControllerTest extends TestCase
      *
      * @return void
      */
-    public function test_store_challenge()
+    public function test_store_company()
     {
-        $response = $this->json('POST', '/api/v1/challenges', [
-            'title' => 'Test',
-            'description' => 'Test',
-            'difficulty' => 1,
+        $response = $this->json('POST', '/api/v1/companies', [
+            'name' => 'Test',
+            'image_path' => 'image',
+            'location' => 'location',
+            'industry' => 'industry',
             'user_id' => $this->user->id
         ]);
 
@@ -127,9 +134,10 @@ class ChallengesControllerTest extends TestCase
             ->assertJsonStructure([
                 'data' => [
                     'id',
-                    'title',
-                    'description',
-                    'difficulty',
+                    'name',
+                    'image_path',
+                    'location',
+                    'industry',
                     'user' => [
                         'id',
                         'name',
@@ -137,9 +145,8 @@ class ChallengesControllerTest extends TestCase
                     ]
                 ],
             ]);
-
         $data = $response->json();
-        Challenges::where('id', $data['data']['id'])->delete();
+        Companies::where('id', $data['data']['id'])->delete();
     }
 
     /**
@@ -147,11 +154,12 @@ class ChallengesControllerTest extends TestCase
      *
      * @return void
      */
-    public function test_error_store_challenge()
+    public function test_error_store_company()
     {
-        $response = $this->json('POST', '/api/v1/challenges', [
-            'description' => 'Test',
-            'difficulty' => 1,
+        $response = $this->json('POST', '/api/v1/companies', [
+            'image_path' => 'image',
+            'location' => 'location',
+            'industry' => 'industry',
             'user_id' => $this->user->id
         ]);
 
@@ -164,29 +172,31 @@ class ChallengesControllerTest extends TestCase
      *
      * @return void
      */
-    public function test_update_challenge()
+    public function test_update_company()
     {
-        $response = $this->json('PUT', '/api/v1/challenges/'.$this->challenge->id, [
-            'title' => 'New Test',
-            'description' => 'Test',
-            'difficulty' => 1,
+        $response = $this->json('PUT', '/api/v1/companies/' . $this->company->id, [
+            'name' => 'Test Update',
+            'image_path' => 'image',
+            'location' => 'location',
+            'industry' => 'industry',
             'user_id' => $this->user->id
         ]);
 
         $response->assertStatus(200)
-        ->assertJsonStructure([
-            'data' => [
-                'id',
-                'title',
-                'description',
-                'difficulty',
-                'user' => [
+            ->assertJsonStructure([
+                'data' => [
                     'id',
                     'name',
-                    'email'
-                ]
-            ],
-        ]);
+                    'image_path',
+                    'location',
+                    'industry',
+                    'user' => [
+                        'id',
+                        'name',
+                        'email'
+                    ]
+                ],
+            ]);
     }
 
     /**
@@ -194,12 +204,13 @@ class ChallengesControllerTest extends TestCase
      *
      * @return void
      */
-    public function test_error_update_challenge()
+    public function test_error_update_company()
     {
-        $response = $this->json('PUT', '/api/v1/challenges/1500', [
-            'title' => 'New Test',
-            'description' => 'Test',
-            'difficulty' => 1,
+        $response = $this->json('PUT', '/api/v1/companies/1500', [
+            'name' => 'Test Update',
+            'image_path' => 'image',
+            'location' => 'location',
+            'industry' => 'industry',
             'user_id' => $this->user->id
         ]);
 
@@ -218,9 +229,9 @@ class ChallengesControllerTest extends TestCase
      *
      * @return void
      */
-     public function test_delete_challenge()
+    public function test_delete_company()
     {
-        $response = $this->json('DELETE', '/api/v1/challenges/'.$this->challenge->id);
+        $response = $this->json('DELETE', '/api/v1/companies/' . $this->company->id);
 
         $response->assertStatus(200)
             ->assertJsonStructure(['message']);
@@ -231,9 +242,9 @@ class ChallengesControllerTest extends TestCase
      *
      * @return void
      */
-    public function test_error_delete_challenge()
+    public function test_error_delete_company()
     {
-        $response = $this->json('DELETE', '/api/v1/challenges/1500');
+        $response = $this->json('DELETE', '/api/v1/companies/1500');
 
         $response->assertStatus(400)
             ->assertJsonStructure(['message', 'error', 'code']);
@@ -242,8 +253,7 @@ class ChallengesControllerTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        $this->challenge->delete();
+        $this->company->delete();
         $this->user->delete();
     }
-
 }
