@@ -22,7 +22,7 @@
 # Proceso de ejecución
 
 1. Una vez descargue el repositorio desde [TalentPitch](https://github.com/sebaris/talentPitch.git)
-2. Ubiquese en la carpeta donde realizo el clone
+2. Ubíquese en la carpeta donde realizo el clone
 3. Ejecute:
 ```bash
 composer install
@@ -36,9 +36,9 @@ DB_DATABASE=talent-pich
 DB_USERNAME=user
 DB_PASSWORD=pass
 ```
-Cambie el user y pass por la configuración que tenga en su local o servidor, asi como puede modificar cualquiera de los parametros aca presentes.
+Cambie el user y pass por la configuración que tenga en su local o servidor, así como puede modificar cualquiera de los parámetros acá presentes.
 
-5. Ejecute el siguiente comando para migrar la estrucutra de tablas en la base de datos:
+5. Ejecute el siguiente comando para migrar la estructura de tablas en la base de datos:
 ```
 php artisan migrate --seed
 ```
@@ -52,12 +52,12 @@ php artisan serve
 
 7. Para hacer el llenado de las tablas en base de datos puede hacer uso del siguiente POST:
 
-Antes de la ejecución ingrese al archivo config/services.php y ajuste el parametro de la key en el array gpt, es posible que GPT la remueva por seguridad, contáctame para entregarte una para test o genere una propia clave en [OpenAI](https://platform.openai.com/api-keys)
+Antes de la ejecución ingrese al archivo config/services.php y ajuste el parámetro de la key en el array gpt, es posible que GPT la remueva por seguridad, contácteme para entregar un key para test o genere una propia clave en [OpenAI](https://platform.openai.com/api-keys)
 
 ```json
 curl --location 'http://127.0.0.1:8000/api/process-gpt?model=user'
 ```
-Carguelo en Postman y el parametro model toma cualquiera de los siguientes valores: users/companies/challenges/programs según la tabla que desee llenar
+Cargue en Postman y el parámetro “model” toma cualquiera de los siguientes valores: users/companies/challenges/programs según la tabla que desee llenar.
 
 Este servicio conecta a API de GTP, para generar datos aleatorios.
 
@@ -313,4 +313,16 @@ Se debe tener en cuenta que todas las APIs anteriormente listadas requieren de l
 ```json
 curl --location 'http://127.0.0.1:8000/api/v1/programs-participants?page=1' \
 --header 'Authorization: Bearer 6|bSlXDWQxotPeg6RajjGDjXPqUGBMLFNrJH8Kxgzr82937a58'
+```
+
+## Pruebas unitarias
+
+Para correr las pruebas unitarias basta con ejecutar el siguiente comando:
+```
+php artisan test
+```
+
+O si desea ejecutarlo por cada controlador puede hacerlo así:
+```
+php artisan test --filter ProgramsControllerTest
 ```
