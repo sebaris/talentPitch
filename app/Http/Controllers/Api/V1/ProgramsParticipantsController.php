@@ -36,13 +36,14 @@ class ProgramsParticipantsController extends Controller
                 $data = ProgramsParticipants::create($request->all());
                 return new V1ProgramsParticipants($data);
             } else {
-                throw new Exception('Data no saved!', 404);
+                throw new Exception('Combination entity id and entity type not found or no allowed', 404);
             }
         } catch (Exception $e) {
             return response()->json([
-                'message' => $e->getMessage(),
+                'message' => 'Data no saved!',
+                'error' => $e->getMessage(),
                 'code' => $e->getCode()
-            ]);
+            ], 400);
         }
     }
 
@@ -54,10 +55,16 @@ class ProgramsParticipantsController extends Controller
     public function show(int $id)
     {
         try {
-            $challenge = ProgramsParticipants::find($id);
-            return new V1ProgramsParticipants($challenge);
+            $program_participant = ProgramsParticipants::find($id);
+            if ($program_participant == null) {
+                throw new ModelNotFoundException('Program Participant not found', 404);
+            }
+            return new V1ProgramsParticipants($program_participant);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Challenge not found'], 404);
+            return response()->json([
+                'error' => $e->getMessage(),
+                'code' => $e->getCode()
+            ], $e->getCode());
         }
     }
 
@@ -70,17 +77,24 @@ class ProgramsParticipantsController extends Controller
     public function update(Request $request, int $id)
     {
         try {
-            $challenge = ProgramsParticipants::find($id);
-            if ($challenge && ProgramsParticipants::validateEntities($request)) {
-                $challenge->update($request->all());
-                return new V1ProgramsParticipants($challenge);
+            $program_participant = ProgramsParticipants::find($id);
+            if ($program_participant ) {
+                if (ProgramsParticipants::validateEntities($request)) {
+                    $program_participant->update($request->all());
+                    return new V1ProgramsParticipants($program_participant);
+                } else {
+                    throw new Exception('Combination entity id and entity type not found or no allowed', 404);
+                }
+            } else {
+                throw new ModelNotFoundException('Program Participant not found', 400);
             }
         } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Not update challenge',
+                'error' => $th->getMessage(),
+                'code' => $th->getCode()
+            ], 400);
         }
-
-        return response()->json([
-            'message' => 'Not update challenge'
-        ]);
     }
 
     /**
@@ -91,17 +105,20 @@ class ProgramsParticipantsController extends Controller
     public function destroy(int $id)
     {
         try {
-            $challenge = ProgramsParticipants::find($id);
-            if (isset($challenge) && $challenge->delete()) {
+            $program_participant = ProgramsParticipants::find($id);
+            if (isset($program_participant) && $program_participant->delete()) {
                 return response()->json([
                     'message' => 'Deleted successfully'
                 ], 200);
+            } else {
+                throw new Exception("No delete data", 400);
             }
         } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'No delete data',
+                'error' => $th->getMessage(),
+                'code' => $th->getCode()
+            ], 400);
         }
-
-        return response()->json([
-            'message' => 'Not found'
-        ]);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\CompaniesResource;
 use App\Models\Companies;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
@@ -34,11 +35,12 @@ class CompaniesController extends Controller
             $data = Companies::create($request->all());
             return new CompaniesResource($data);
         } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Data no saved!',
+                'error' => $th->getMessage(),
+                'code' => $th->getCode()
+            ], 400);
         }
-
-        return response()->json([
-            'message' => 'Data no saved!'
-        ]);
     }
 
     /**
@@ -49,10 +51,16 @@ class CompaniesController extends Controller
     public function show(int $id)
     {
         try {
-            $challenge = Companies::find($id);
-            return new CompaniesResource($challenge);
+            $company = Companies::find($id);
+            if ($company == null) {
+                throw new ModelNotFoundException('Company not found', 404);
+            }
+            return new CompaniesResource($company);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Challenge not found'], 404);
+            return response()->json([
+                'error' => $e->getMessage(),
+                'code' => $e->getCode()
+            ], $e->getCode());
         }
     }
 
@@ -65,17 +73,20 @@ class CompaniesController extends Controller
     public function update(Request $request, int $id)
     {
         try {
-            $challenge = Companies::find($id);
-            if ($challenge) {
-                $challenge->update($request->all());
-                return new CompaniesResource($challenge);
+            $company = Companies::find($id);
+            if ($company) {
+                $company->update($request->all());
+                return new CompaniesResource($company);
+            } else {
+                throw new ModelNotFoundException('Company not found', 400);
             }
         } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Not update companie',
+                'error' => $th->getMessage(),
+                'code' => $th->getCode()
+            ], 400);
         }
-
-        return response()->json([
-            'message' => 'Not update challenge'
-        ]);
     }
 
     /**
@@ -86,17 +97,20 @@ class CompaniesController extends Controller
     public function destroy(int $id)
     {
         try {
-            $challenge = Companies::find($id);
-            if (isset($challenge) && $challenge->delete()) {
+            $company = Companies::find($id);
+            if (isset($company) && $company->delete()) {
                 return response()->json([
                     'message' => 'Deleted successfully'
                 ], 200);
+            } else {
+                throw new Exception("No delete data", 400);
             }
         } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'No delete data',
+                'error' => $th->getMessage(),
+                'code' => $th->getCode()
+            ], 400);
         }
-
-        return response()->json([
-            'message' => 'Not found'
-        ]);
     }
 }

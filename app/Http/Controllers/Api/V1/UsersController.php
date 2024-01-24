@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\UsersResource;
 use App\Models\User;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
@@ -34,11 +35,12 @@ class UsersController extends Controller
             $data = User::create($request->all());
             return new UsersResource($data);
         } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Data no saved!',
+                'error' => $th->getMessage(),
+                'code' => $th->getCode()
+            ], 400);
         }
-
-        return response()->json([
-            'message' => 'Data no saved!'
-        ]);
     }
 
     /**
@@ -49,10 +51,16 @@ class UsersController extends Controller
     public function show(int $id)
     {
         try {
-            $challenge = User::find($id);
-            return new UsersResource($challenge);
+            $user = User::find($id);
+            if ($user == null) {
+                throw new ModelNotFoundException('User not found', 404);
+            }
+            return new UsersResource($user);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Challenge not found'], 404);
+            return response()->json([
+                'error' => $e->getMessage(),
+                'code' => $e->getCode()
+            ], $e->getCode());
         }
     }
 
@@ -65,17 +73,20 @@ class UsersController extends Controller
     public function update(Request $request, int $id)
     {
         try {
-            $challenge = User::find($id);
-            if ($challenge) {
-                $challenge->update($request->all());
-                return new UsersResource($challenge);
+            $user = User::find($id);
+            if ($user) {
+                $user->update($request->all());
+                return new UsersResource($user);
+            } else {
+                throw new ModelNotFoundException('User not found', 400);
             }
         } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Not update user',
+                'error' => $th->getMessage(),
+                'code' => $th->getCode()
+            ], 400);
         }
-
-        return response()->json([
-            'message' => 'Not update challenge'
-        ]);
     }
 
     /**
@@ -86,17 +97,20 @@ class UsersController extends Controller
     public function destroy(int $id)
     {
         try {
-            $challenge = User::find($id);
-            if (isset($challenge) && $challenge->delete()) {
+            $user = User::find($id);
+            if (isset($user) && $user->delete()) {
                 return response()->json([
                     'message' => 'Deleted successfully'
                 ], 200);
+            } else {
+                throw new Exception("No delete data", 400);
             }
         } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'No delete data',
+                'error' => $th->getMessage(),
+                'code' => $th->getCode()
+            ], 400);
         }
-
-        return response()->json([
-            'message' => 'Not found'
-        ]);
     }
 }

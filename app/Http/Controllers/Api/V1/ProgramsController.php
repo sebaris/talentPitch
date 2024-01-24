@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\ProgramsResource;
 use App\Models\Programs;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
@@ -34,11 +35,12 @@ class ProgramsController extends Controller
             $data = Programs::create($request->all());
             return new ProgramsResource($data);
         } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Data no saved!',
+                'error' => $th->getMessage(),
+                'code' => $th->getCode()
+            ], 400);
         }
-
-        return response()->json([
-            'message' => 'Data no saved!'
-        ]);
     }
 
     /**
@@ -49,10 +51,16 @@ class ProgramsController extends Controller
     public function show(int $id)
     {
         try {
-            $challenge = Programs::find($id);
-            return new ProgramsResource($challenge);
+            $program = Programs::find($id);
+            if ($program == null) {
+                throw new ModelNotFoundException('Program not found', 404);
+            }
+            return new ProgramsResource($program);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Challenge not found'], 404);
+            return response()->json([
+                'error' => $e->getMessage(),
+                'code' => $e->getCode()
+            ], $e->getCode());
         }
     }
 
@@ -65,17 +73,20 @@ class ProgramsController extends Controller
     public function update(Request $request, int $id)
     {
         try {
-            $challenge = Programs::find($id);
-            if ($challenge) {
-                $challenge->update($request->all());
-                return new ProgramsResource($challenge);
+            $program = Programs::find($id);
+            if ($program) {
+                $program->update($request->all());
+                return new ProgramsResource($program);
+            } else {
+                throw new ModelNotFoundException('Program not found', 400);
             }
         } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Not update program',
+                'error' => $th->getMessage(),
+                'code' => $th->getCode()
+            ], 400);
         }
-
-        return response()->json([
-            'message' => 'Not update challenge'
-        ]);
     }
 
     /**
@@ -86,17 +97,20 @@ class ProgramsController extends Controller
     public function destroy(int $id)
     {
         try {
-            $challenge = Programs::find($id);
-            if (isset($challenge) && $challenge->delete()) {
+            $program = Programs::find($id);
+            if (isset($program) && $program->delete()) {
                 return response()->json([
                     'message' => 'Deleted successfully'
                 ], 200);
+            } else {
+                throw new Exception("No delete data", 400);
             }
         } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'No delete data',
+                'error' => $th->getMessage(),
+                'code' => $th->getCode()
+            ], 400);
         }
-
-        return response()->json([
-            'message' => 'Not found'
-        ]);
     }
 }

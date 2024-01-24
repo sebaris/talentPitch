@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\ChallengesResource;
 use App\Models\Challenges;
+use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
@@ -33,11 +34,13 @@ class ChallengesController extends Controller
         try {
             $data = Challenges::create($request->all());
             return new ChallengesResource($data);
-        } catch (\Throwable $th) {}
-
-        return response()->json([
-            'message' => 'Data no saved!'
-        ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Data no saved!',
+                'error' => $th->getMessage(),
+                'code' => $th->getCode()
+            ], 400);
+        }
     }
 
     /**
@@ -49,9 +52,15 @@ class ChallengesController extends Controller
     {
         try {
             $challenge = Challenges::find($id);
+            if ($challenge == null) {
+                throw new ModelNotFoundException('Challenge not found', 404);
+            }
             return new ChallengesResource($challenge);
         } catch (ModelNotFoundException $e) {
-            return response()->json(['error' => 'Challenge not found'], 404);
+            return response()->json([
+                'error' => $e->getMessage(),
+                'code' => $e->getCode()
+            ], $e->getCode());
         }
     }
 
@@ -68,13 +77,16 @@ class ChallengesController extends Controller
             if ($challenge) {
                 $challenge->update($request->all());
                 return new ChallengesResource($challenge);
+            } else {
+                throw new ModelNotFoundException('Challenge not found', 400);
             }
         } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'Not update challenge',
+                'error' => $th->getMessage(),
+                'code' => $th->getCode()
+            ], 400);
         }
-
-        return response()->json([
-            'message' => 'Not update challenge'
-        ]);
     }
 
     /**
@@ -90,11 +102,15 @@ class ChallengesController extends Controller
                 return response()->json([
                     'message' => 'Deleted successfully'
                 ], 200);
+            } else {
+                throw new Exception("No delete data", 400);
             }
-        } catch (\Throwable $th) {}
-
-        return response()->json([
-            'message' => 'Not found'
-        ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => 'No delete data',
+                'error' => $th->getMessage(),
+                'code' => $th->getCode()
+            ], 400);
+        }
     }
 }

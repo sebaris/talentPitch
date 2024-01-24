@@ -12,9 +12,9 @@ class ProcessGtpController extends Controller
   // Enunciados para hacer el llamado a GPT
   const STATAMENTS = [
     'users' => "generate a list of 10 users in JSON format with the following fields: name, email, image_path, password",
-    'companies' => "generate a list of 10 companies in JSON format with the following fields: name, image_path, location, industry, randon user_id of 1 to 10",
-    'challenges' => "generate a list of 10 challenges in JSON format with the following fields: title, description, integer for difficulty, randon user_id of 1 to 10",
-    'programs' => "generate a list of 10 academic programs in JSON format with the following fields: title, description, start_date format yyyy-mm-dd, end_date format yyyy-mm-dd, randon user_id of 1 to 10",
+    'companies' => "generate a list of 10 companies in JSON format with the following fields: name, image_path, location, industry, user_id consecutive 1 to 10",
+    'challenges' => "generate a list of 10 challenges in JSON format with the following fields: title, description, integer for difficulty, user_id consecutive of 1 to 10",
+    'programs' => "generate a list of 10 academic programs in JSON format with the following fields: title, description, start_date format yyyy-mm-dd, end_date format yyyy-mm-dd, user_id consecutive of 1 to 10",
   ];
 
   /**
