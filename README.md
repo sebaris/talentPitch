@@ -45,7 +45,12 @@ php artisan migrate --seed
 
 Este comando también nos creará un usuario en base de datos para posterior autentificación de las APIs, consulte entonces la tabla y tome el correo electrónico para el cual la contraseña será password. Este será usado en pasos siguientes.
 
-6. Para hacer el llenado de las tablas en base de datos puede hacer uso del siguiente POST:
+6. Inicialice el servidor, si esta en su local, con el siguiente comando:
+```
+php artisan serve
+```
+
+7. Para hacer el llenado de las tablas en base de datos puede hacer uso del siguiente POST:
 
 Antes de la ejecución ingrese al archivo config/services.php y ajuste el parametro de la key en el array gpt, es posible que GPT la remueva por seguridad, contáctame para entregarte una para test o genere una propia clave en [OpenAI](https://platform.openai.com/api-keys)
 
@@ -56,7 +61,7 @@ Carguelo en Postman y el parametro model toma cualquiera de los siguientes valor
 
 Este servicio conecta a API de GTP, para generar datos aleatorios.
 
-7. Una vez llenada de información las tablas, se procede a usar la siguiente API de autentificación:
+8. Una vez llenada de información las tablas, se procede a usar la siguiente API de autentificación:
 ```json
 curl --location 'http://127.0.0.1:8000/api/login' \
 --form 'email="derdman@example.net"' \
@@ -64,7 +69,7 @@ curl --location 'http://127.0.0.1:8000/api/login' \
 ```
 Donde se modifica el email y password por los tomados en el punto 6.
 
-8. La anterior API nos genera una respuesta con la siguiente estructura:
+9. La anterior API nos genera una respuesta con la siguiente estructura:
 ```json
 {
     "user": [
