@@ -46,6 +46,9 @@ php artisan migrate --seed
 Este comando también nos creará un usuario en base de datos para posterior autentificación de las APIs, consulte entonces la tabla y tome el correo electrónico para el cual la contraseña será password. Este será usado en pasos siguientes.
 
 6. Para hacer el llenado de las tablas en base de datos puede hacer uso del siguiente POST:
+
+Antes de la ejecución ingrese al archivo config/services.php y ajuste el parametro de la key en el array gpt, intente asignar esta: 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, es posible que GPT la remueva por seguridad, contáctame o genere una propia clave en [OpenAI](https://platform.openai.com/api-keys)
+
 ```json
 curl --location 'http://127.0.0.1:8000/api/process-gpt?model=user'
 ```
