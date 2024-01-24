@@ -21,25 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(UsersController::class, function ($app) {
-            return new UsersController($app->make(User::class));
-        });
-
-        $this->app->bind(ChallengesController::class, function ($app) {
-            return new ChallengesController($app->make(Challenges::class));
-        });
-
-        $this->app->bind(CompaniesController::class, function ($app) {
-            return new CompaniesController($app->make(Companies::class));
-        });
-
-        $this->app->bind(ProgramsController::class, function ($app) {
-            return new ProgramsController($app->make(Programs::class));
-        });
-
-        $this->app->bind(ProgramsParticipantsController::class, function ($app) {
-            return new ProgramsParticipantsController($app->make(ProgramsParticipants::class));
-        });
+        //
     }
 
     /**

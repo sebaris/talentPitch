@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller {
 
+  /**
+   * Action for autentication user in API
+   *
+   * @param Request $request
+   * @return void
+   */
   public function login(Request $request) {
     $this->validateLogin($request);
 
@@ -30,6 +36,12 @@ class LoginController extends Controller {
     ]);
   }
 
+  /**
+   * Function to validate data in login
+   *
+   * @param Request $request
+   * @return void
+   */
   public function validateLogin(Request $request) {
     return $request->validate([
       'email' => 'required|email',

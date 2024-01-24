@@ -8,7 +8,7 @@ use App\Models\Programs;
 use App\Models\User;
 
 /**
- *
+ * Enum for all entity types awolled in the system
  */
 enum EntityType: string
 {
@@ -22,11 +22,22 @@ enum EntityType: string
   case PROGRAM = 'program';
   case PROGRAMS = 'programs';
 
+  /**
+   * Function to get the class of the entity type
+   *
+   * @param string $id
+   * @return User|Challenges|Companies|Programs
+   */
   public static function getParent(string $id): User|Challenges|Companies|Programs
   {
     return EntityType::from($id)->id();
   }
 
+  /**
+   * Function to mathc entity type with class
+   *
+   * @return User|Challenges|Companies|Programs
+   */
   public function id(): User|Challenges|Companies|Programs
   {
     $value = $this->value;

@@ -27,7 +27,7 @@ class ProgramsParticipants extends Model
     }
 
     /**
-     * Function use enum for generta model from relation
+     * Function to validate that the entity is validated with respect to the created enum
      *
      * @param Request $request
      * @return bool

@@ -13,6 +13,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         \App\Models\User::factory(1)->create();
+
+        //Descomente las siguientes lienas para crear los registros en la base de datos
+
         // \App\Models\Challenges::factory(10)->create();
         // \App\Models\Companies::factory(10)->create();
         // \App\Models\Programs::factory(10)->create();
